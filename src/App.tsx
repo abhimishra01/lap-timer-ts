@@ -10,42 +10,47 @@ function App() {
   const [count, setCount] = useState<number>(DEFAULT_COUNT);
   const [timer, setTimer] = useState<any>(null);
   const [laps, setLaps] = useState<Array<number>>([]);
+  const [running, setRunning] = useState<boolean>(false)
 
-  const handleStart = () =>
-    setTimer(
-      setInterval(
-        () =>
-          setCount((prevCount) => {
-            return prevCount + 1;
-          }),
-        1000
-      )
-    );
-
-  const handleStop = () => clearInterval(timer);
+  const handleStart = () =>{
+    setRunning(true)
+  setTimer(
+  setInterval(
+    () =>
+      setCount((prevCount) => {
+        return prevCount + 1;
+      }),
+    1000
+  )
+);
+}
+  const handleStop = () =>{
+    setRunning(false)
+    clearInterval(timer);
+  }
   const handleReset = () => {
+    setRunning(false)
     clearInterval(timer);
     setLaps([]);
     setCount(DEFAULT_COUNT);
   };
 
-  const handleLap = () => setLaps([...laps, count]);
+  const handleLap = () => {
+    setLaps([...laps, count]);
+  }
 
   return (
     <>
       <h3>{count}</h3>
       <div>
-        <button onClick={handleStart} style={buttonStyle}>
-          start
+        <button onClick={running ?handleStop  : handleStart } style={buttonStyle}>
+         {running ? "stop" : "start"}
         </button>
 
-        <button onClick={handleStop} style={buttonStyle}>
-          stop
-        </button>
         <button onClick={handleReset} style={buttonStyle}>
           reset
         </button>
-        <button onClick={handleLap} style={buttonStyle}>
+        <button disabled={!running} onClick={handleLap} style={buttonStyle}>
           lap
         </button>
       </div>
@@ -72,3 +77,12 @@ export default App;
 // render laps :- laps.map(lap => <li> lap</li>)
 
 // handleReset :- clearInterval(startTimer), setCount(0), setLaps([])
+
+// enhancements
+// 1) after start :- either disable start btn or switch start / stop in 
+// same ui so start handler is not clicked again
+// state :- running :- switch start/stop based on that
+
+
+// 2) taking laps when stoppped
+// if count == 0 / !running, restrict laps
